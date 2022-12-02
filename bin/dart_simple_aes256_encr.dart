@@ -5,8 +5,8 @@ import 'dart:io';
 void main(List<String> arguments) {
   List<Person> persons = [];
   var currentSelect = -1;
-  var currentAccount = -1;
-  var idUser = -1;
+  var currentAccount = 0;
+  var idUser = 0;
 
   print("\x1B[2J\x1B[0;0H");
   print('Welcome');
@@ -15,7 +15,7 @@ void main(List<String> arguments) {
 
   for (;;) {
     print(
-        'Hi, ${(currentAccount >= 0) ? "${persons[currentAccount].getName(currentAccount)}." : "Anonymous. Please select account first"}\nHave a nice day\n');
+        'Hi, ${(currentAccount > 0) ? "${persons[currentAccount - 1].getName(currentAccount)}." : "Anonymous. Please select account first"}\nHave a nice day\n');
     print('============== MAIN MENU ==============\n');
     print('${(currentSelect == 1) ? "->" : "  "} 1: Send Message');
     print('${(currentSelect == 2) ? "->" : "  "} 2: Read Message\n');
@@ -49,7 +49,10 @@ void main(List<String> arguments) {
           switch (input) {
             case '1':
               if (persons.isNotEmpty) {
-                persons[1].getName(0);
+                print("\x1B[2J\x1B[0;0H");
+                persons.forEach((element) {
+                  print('${element.id}: ${element.getName(element.id)}');
+                });
               } else {
                 print("\x1B[2J\x1B[0;0H");
                 print('Please add account first');
@@ -59,15 +62,23 @@ void main(List<String> arguments) {
 
             case '2':
               idUser++;
-              Person person = Person("Budi", idUser);
-              persons.add(person);
+              print("\x1B[2J\x1B[0;0H");
+
               break;
 
-            // case '3':
-            //   print('Select User ID: ');
-            //   input = stdin.readLineSync();
-            //   currentAccount =
-            //   break;
+            case '3':
+              print("\x1B[2J\x1B[0;0H");
+              print('Select User ID: ');
+              
+              int? thisCurrentAccount = int.parse(stdin.readLineSync()!);
+              if (thisCurrentAccount <= 0 || thisCurrentAccount > persons.length) {
+                thisCurrentAccount = currentAccount;
+                print('Please enter a valid User ID');
+              } else {
+                currentAccount = thisCurrentAccount;
+              }
+              sleep(Duration(seconds: 2));
+              break;
 
             case '0':
               state = false;
