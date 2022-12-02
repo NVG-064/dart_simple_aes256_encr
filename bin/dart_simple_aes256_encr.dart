@@ -15,7 +15,7 @@ void main(List<String> arguments) {
 
   for (;;) {
     print(
-        'Hi, ${(currentAccount > 0) ? "${persons[currentAccount - 1].getName(currentAccount)}." : "Anonymous. Please select account first"}\nHave a nice day\n');
+        'Hi, ${(currentAccount > 0) ? "${persons[currentAccount - 1].getName(currentAccount)}(${persons[currentAccount - 1].id})." : "Anonymous. Please select account first"}\nHave a nice day\n');
     print('============== MAIN MENU ==============\n');
     print('${(currentSelect == 1) ? "->" : "  "} 1: Send Message');
     print('${(currentSelect == 2) ? "->" : "  "} 2: Read Message\n');
@@ -50,6 +50,7 @@ void main(List<String> arguments) {
             case '1':
               if (persons.isNotEmpty) {
                 print("\x1B[2J\x1B[0;0H");
+                print('ID: NAME\n=========================');
                 persons.forEach((element) {
                   print('${element.id}: ${element.getName(element.id)}');
                 });
@@ -63,15 +64,19 @@ void main(List<String> arguments) {
             case '2':
               idUser++;
               print("\x1B[2J\x1B[0;0H");
-
+              print('Enter the name: ');
+              var name = stdin.readLineSync();
+              Person person = Person(name, idUser);
+              persons.add(person);
               break;
 
             case '3':
               print("\x1B[2J\x1B[0;0H");
               print('Select User ID: ');
-              
+
               int? thisCurrentAccount = int.parse(stdin.readLineSync()!);
-              if (thisCurrentAccount <= 0 || thisCurrentAccount > persons.length) {
+              if (thisCurrentAccount <= 0 ||
+                  thisCurrentAccount > persons.length) {
                 thisCurrentAccount = currentAccount;
                 print('Please enter a valid User ID');
               } else {
