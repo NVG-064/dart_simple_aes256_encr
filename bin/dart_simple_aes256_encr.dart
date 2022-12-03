@@ -1,4 +1,3 @@
-import 'package:dart_simple_aes256_encr/aes.dart' as cryptography;
 import 'package:dart_simple_aes256_encr/person.dart';
 import 'dart:io';
 
@@ -74,6 +73,7 @@ void main(List<String> arguments) {
               print("\x1B[2J\x1B[0;0H");
               print('Select User ID: ');
 
+              // Exception still unhandled
               int? thisCurrentAccount = int.parse(stdin.readLineSync()!);
               if (thisCurrentAccount <= 0 ||
                   thisCurrentAccount > persons.length) {
