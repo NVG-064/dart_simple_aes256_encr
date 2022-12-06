@@ -1,8 +1,10 @@
+import 'package:dart_simple_aes256_encr/message.dart';
 import 'package:dart_simple_aes256_encr/person.dart';
 import 'dart:io';
 
 void main(List<String> arguments) {
   List<Person> persons = [];
+  List<Message> messages = [];
   var currentSelect = -1;
   var currentAccount = 0;
   var idUser = 0;
@@ -26,6 +28,45 @@ void main(List<String> arguments) {
     switch (input) {
       case '1':
         currentSelect = 1;
+        int? to;
+        Message message = Message();
+        message.initialize();
+        // messages.add(message);
+
+        for (;;) {
+          print("\x1B[2J\x1B[0;0H");
+          print('Enter User ID to send the message');
+          to = int.parse(stdin.readLineSync()!);
+          if (to <= 0 || to > persons.length || to == currentAccount) {
+            to = currentAccount;
+            print('Please enter a valid User ID');
+          } else {
+            break;
+          }
+        }
+
+        print('Write your message below:');
+        var userMessage = stdin.readLineSync()!;
+        message.tempMessage = userMessage;
+
+        // message.generateMac(message.secretKey, message.tempMessage.codeUnits);
+        // message.doEncrypt(message.secretKey, message.tempMessage.codeUnits,
+        //     message.nonce, message.cipherAlgorithm);
+        message.sendMessage(message.tempMessage, currentAccount, to);
+        messages.add(message);
+
+        // For debugging purpose
+        print(messages[currentAccount].mac.bytes);
+        print(messages[currentAccount].tempMessage);
+        messages[currentAccount].extractSecretKey();
+        print(messages[currentAccount].macAlgorithm);
+        print(messages[currentAccount].mac);
+        print(messages[currentAccount].cipherAlgorithm);
+        print(messages[currentAccount].from);
+        print(messages[currentAccount].to);
+        print(messages[currentAccount].tempMac);
+        print(persons[currentAccount].secretKey);
+
         break;
 
       case '2':
@@ -38,6 +79,8 @@ void main(List<String> arguments) {
 
         while (state == true) {
           print("\x1B[2J\x1B[0;0H");
+          print(
+        'Hi, ${(currentAccount > 0) ? "${persons[currentAccount - 1].getName(currentAccount)}(${persons[currentAccount - 1].id})." : "Anonymous. Please select account first"}\nHave a nice day\n');
           print('============== ACCOUNT ==============\n');
           print('1: Show All Account\n');
           print('2: Add Account');

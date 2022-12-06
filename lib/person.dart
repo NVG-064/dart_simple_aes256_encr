@@ -1,11 +1,7 @@
 class Person {
   var _name = '';
   var _id = -1;
-  var _secretKey;
-  var _nonce;
-  var _mac;
-  List<int> _ciphertext = [];
-  var _onlyToUserId;
+  var secretKey;
 
   Person(name, id) {
     _name = name;
