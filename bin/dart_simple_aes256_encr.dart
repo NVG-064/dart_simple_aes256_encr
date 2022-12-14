@@ -110,7 +110,8 @@ Future<void> main(List<String> arguments) async {
             break;
           }
 
-          print('From ${messages[i].from} to ${messages[i].to}: ${messages[i].getMessages(currentAccount)} (${messages[i].macStatus})');
+          print(
+              'From ${messages[i].from + 1} to ${messages[i].to + 1}: ${messages[i].getMessages(currentAccount - 1)} (${messages[i].macStatus})');
         }
         await Future.delayed(Duration(seconds: 10));
         break;
