@@ -1,12 +1,15 @@
+import 'dart:convert';
+
 import 'package:dart_simple_aes256_encr/message.dart';
 import 'package:dart_simple_aes256_encr/person.dart';
 import 'dart:io';
 
-void main(List<String> arguments) {
+Future<void> main(List<String> arguments) async {
   List<Person> persons = [];
   List<Message> messages = [];
   var currentSelect = -1;
   var currentAccount = 0;
+  var currentMessage = -1;
   var idUser = 0;
 
   print("\x1B[2J\x1B[0;0H");
@@ -30,7 +33,7 @@ void main(List<String> arguments) {
         currentSelect = 1;
         int? to;
         Message message = Message();
-        message.initialize();
+        // message.initialize();
         // messages.add(message);
 
         for (;;) {
@@ -39,38 +42,77 @@ void main(List<String> arguments) {
           to = int.parse(stdin.readLineSync()!);
           if (to <= 0 || to > persons.length || to == currentAccount) {
             to = currentAccount;
-            print('Please enter a valid User ID');
+            print(
+                '\nYou cannot send message to yourself\nOr please enter a valid User ID');
+            sleep(Duration(seconds: 3));
+            break;
           } else {
+            print('Write your message below:');
+            var userMessage = stdin.readLineSync()!;
+            currentMessage += 1;
+
+            message.from = currentAccount - 1;
+            message.to = to - 1;
+            messages.add(message);
+            // print(messages[currentMessage].to);
+            messages[currentMessage].doSecureBox(utf8.encode(userMessage));
+
+            // for debugging purpose
+
+            // print(await messages[currentMessage].secretKey); // It always return to null
+
+            print('\nMessage successfully sent');
+
+            // For debugging purpose
+
+            // print('\n');
+            // // print(messages[currentMessage].clearTxt);
+            // print(messages[currentMessage].from);
+            // print(messages[currentMessage].to);
+            // messages[currentMessage].doSecureBox(userMessage.codeUnits);
+
+            // currentMessage += 1;
+
+            // message.generateMac(message.secretKey, message.tempMessage.codeUnits);
+            // message.doEncrypt(message.secretKey, message.tempMessage.codeUnits,
+            // message.nonce, message.cipherAlgorithm);
+            // message.sendMessage(currentAccount - 1, to - 1);
+            // messages.add(message);
+
+            // For debugging purpose
+            // print(messages[currentAccount - 1].mac); // null
+            // print(messages[currentAccount-1].tempMessage);
+            // messages[currentAccount - 1].extractSecretKey(); // Unknown
+            // print(messages[currentAccount-1].macAlgorithm);
+            // print(messages[currentAccount-1].mac); // null
+            // print(messages[currentAccount-1].cipherAlgorithm);
+            // print(messages[currentAccount - 1].from); // 0
+            // print(messages[currentAccount - 1].to); // 0
+            // print(messages[currentAccount - 1].tempMac); // null
+            // print(persons[currentAccount - 1].secretKey); // null
+
+            await Future.delayed(Duration(seconds: 5));
+            // sleep(Duration(seconds: 3)); // Unnecessary because it's future class
             break;
           }
         }
-
-        print('Write your message below:');
-        var userMessage = stdin.readLineSync()!;
-        message.tempMessage = userMessage;
-
-        // message.generateMac(message.secretKey, message.tempMessage.codeUnits);
-        // message.doEncrypt(message.secretKey, message.tempMessage.codeUnits,
-        //     message.nonce, message.cipherAlgorithm);
-        message.sendMessage(message.tempMessage, currentAccount, to);
-        messages.add(message);
-
-        // For debugging purpose
-        print(messages[currentAccount].mac.bytes);
-        print(messages[currentAccount].tempMessage);
-        messages[currentAccount].extractSecretKey();
-        print(messages[currentAccount].macAlgorithm);
-        print(messages[currentAccount].mac);
-        print(messages[currentAccount].cipherAlgorithm);
-        print(messages[currentAccount].from);
-        print(messages[currentAccount].to);
-        print(messages[currentAccount].tempMac);
-        print(persons[currentAccount].secretKey);
 
         break;
 
       case '2':
         currentSelect = 2;
+
+        print("\x1B[2J\x1B[0;0H");
+        // print(messages[currentMessage].macStatus);
+        for (int i = 0; i < messages.length; i++) {
+          if (messages.isEmpty) {
+            print('Please send message first');
+            break;
+          }
+
+          print('From ${messages[i].from} to ${messages[i].to}: ${messages[i].getMessages(currentAccount)} (${messages[i].macStatus})');
+        }
+        await Future.delayed(Duration(seconds: 10));
         break;
 
       case '3':
@@ -80,12 +122,12 @@ void main(List<String> arguments) {
         while (state == true) {
           print("\x1B[2J\x1B[0;0H");
           print(
-        'Hi, ${(currentAccount > 0) ? "${persons[currentAccount - 1].getName(currentAccount)}(${persons[currentAccount - 1].id})." : "Anonymous. Please select account first"}\nHave a nice day\n');
+              'Hi, ${(currentAccount > 0) ? "${persons[currentAccount - 1].getName(currentAccount)}(${persons[currentAccount - 1].id})." : "Anonymous. Please select account first"}\nHave a nice day\n');
           print('============== ACCOUNT ==============\n');
           print('1: Show All Account\n');
           print('2: Add Account');
           print('3: Select Account\n');
-          print('0: Exit');
+          print('0: Back to Menu');
           input = stdin.readLineSync();
 
           switch (input) {
@@ -94,7 +136,7 @@ void main(List<String> arguments) {
                 print("\x1B[2J\x1B[0;0H");
                 print('ID: NAME\n=========================');
                 persons.forEach((element) {
-                  print('${element.id}: ${element.getName(element.id)}');
+                  print('${element.id}:  ${element.getName(element.id)}');
                 });
               } else {
                 print("\x1B[2J\x1B[0;0H");
@@ -108,7 +150,8 @@ void main(List<String> arguments) {
               print("\x1B[2J\x1B[0;0H");
               print('Enter the name: ');
               var name = stdin.readLineSync();
-              Person person = Person(name, idUser);
+              Person person = Person(idUser);
+              person.name = name;
               persons.add(person);
               break;
 

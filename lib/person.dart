@@ -3,9 +3,8 @@ class Person {
   var _id = -1;
   var secretKey;
 
-  Person(name, id) {
-    _name = name;
-    _id = id;
+  Person(var id) {
+    this.id = id;
   }
 
   String getName(id) {
