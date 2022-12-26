@@ -51,7 +51,8 @@ final _chars = [
   "_",
   "=",
   "+",
-  "<"
+  "<",
+  ">"
 ];
 
 String keyGenerator(String key) {
