@@ -55,18 +55,18 @@ final _chars = [
   ">"
 ];
 
-String keyGenerator(String key) {
+List<int> keyGenerator(String key) {
   int maxIteration = 32;
 
   if (key.isNotEmpty && key.length < 32) {
     maxIteration = 32 - key.length;
-    return key + generate(maxIteration);
+    return utf8.encode(key + generate(maxIteration));
   } else if (key.length > 32) {
-    return key.substring(0, 32);
+    return utf8.encode(key.substring(0, 32));
   } else if (key.length == 32) {
-    return key;
+    return utf8.encode(key);
   } else {
-    return generate(maxIteration);
+    return utf8.encode(generate(maxIteration));
   }
 }
 

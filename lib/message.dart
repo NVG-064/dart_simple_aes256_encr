@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:cryptography/cryptography.dart';
+import 'package:dart_simple_aes256_encr/keygen.dart';
 
 class Message {
   List<int> message = []; // required
@@ -9,10 +9,10 @@ class Message {
   var to = 0; // required
   var macStatus = '';
 
-  Future<void> doSecureBox(List<int> message) async {
+  Future<void> doSecureBox(List<int> message, String key) async {
     var macAlgorithm = Hmac.sha512();
     var cipherAlgorithm = AesCtr.with256bits(macAlgorithm: macAlgorithm);
-    var cipherSecretKey = await cipherAlgorithm.newSecretKey();
+    var cipherSecretKey = await cipherAlgorithm.newSecretKeyFromBytes(keyGenerator(key));
     var cipherNonce = cipherAlgorithm.newNonce();
 
     var fromSecretKey = cipherSecretKey;
