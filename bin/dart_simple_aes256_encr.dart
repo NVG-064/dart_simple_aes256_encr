@@ -55,7 +55,7 @@ Future<void> main(List<String> arguments) async {
             message.to = to - 1;
             messages.add(message);
             // print(messages[currentMessage].to);
-            messages[currentMessage].doSecureBox(utf8.encode(userMessage));
+            messages[currentMessage].doSecureBox(utf8.encode(userMessage, userKey));
 
             // for debugging purpose
 
