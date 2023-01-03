@@ -47,6 +47,8 @@ class Message {
 
     macStatus = getMACStatus(fromMAC, toMAC);
 
+    print('\nMessage successfully sent');
+
     // print('New MAC    : ${(newMAC.bytes != mac.bytes) ? "true" : "false"}');
     // print('Decrypted  : ${Utf8Decoder().convert(clearText)}');
   }

@@ -47,7 +47,11 @@ Future<void> main(List<String> arguments) async {
             sleep(Duration(seconds: 3));
             break;
           } else {
-            print('Write your message below:');
+            print(
+                '\nInsert your key to lock the message (press ENTER to leave empty, if you want to): ');
+            String userKey = stdin.readLineSync()!;
+
+            print('\nWrite your message below:');
             var userMessage = stdin.readLineSync()!;
             currentMessage += 1;
 
@@ -55,13 +59,13 @@ Future<void> main(List<String> arguments) async {
             message.to = to - 1;
             messages.add(message);
             // print(messages[currentMessage].to);
-            messages[currentMessage].doSecureBox(utf8.encode(userMessage, userKey));
+            messages[currentMessage].doSecureBox(utf8.encode(userMessage), userKey);
 
             // for debugging purpose
 
             // print(await messages[currentMessage].secretKey); // It always return to null
 
-            print('\nMessage successfully sent');
+            // print('\nMessage successfully sent');
 
             // For debugging purpose
 
@@ -91,7 +95,7 @@ Future<void> main(List<String> arguments) async {
             // print(messages[currentAccount - 1].tempMac); // null
             // print(persons[currentAccount - 1].secretKey); // null
 
-            await Future.delayed(Duration(seconds: 5));
+            await Future.delayed(Duration(seconds: 3));
             // sleep(Duration(seconds: 3)); // Unnecessary because it's future class
             break;
           }
