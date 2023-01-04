@@ -85,9 +85,9 @@ String generate(int maxIteration) {
 
 // Note, I used this for debug only
 // void main(List<String> args) {
-//   print(keyGenerator("ThisIsMyFuckingSecretKeyDoNotTouchIt")); // length 36
+//   print(keyGenerator("ThisIsMy1234567SecretKeyDoNotTouchIt")); // length 36
 //   print(
-//       "${keyGenerator("This Is My Fucking Secret Key!!!")}, also encoded as: ${utf8.encode(keyGenerator("This Is My Fucking Secret Key!!!"))}"); // length 32
-//   print(keyGenerator("Fuck! ")); // length 6
+//       "${keyGenerator("This Is My 1234567 Secret Key!!!")}, also encoded as: ${utf8.encode(keyGenerator("This Is My 1234567 Secret Key!!!"))}"); // length 32
+//   print(keyGenerator("Dart! ")); // length 6
 //   // print('${_chars.length}'); // List length 36 (last index + 1)
 // }

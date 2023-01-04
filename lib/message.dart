@@ -4,6 +4,8 @@ import 'package:dart_simple_aes256_encr/keygen.dart';
 
 class Message {
   List<int> message = []; // required
+  List<int> encryptedMessages = [];
+  List<int> secretKeyList = [];
   // var tempMessage = '';
   var from = 0; // required
   var to = 0; // required
@@ -12,7 +14,8 @@ class Message {
   Future<void> doSecureBox(List<int> message, String key) async {
     var macAlgorithm = Hmac.sha512();
     var cipherAlgorithm = AesCtr.with256bits(macAlgorithm: macAlgorithm);
-    var cipherSecretKey = await cipherAlgorithm.newSecretKeyFromBytes(keyGenerator(key));
+    var cipherSecretKey =
+        await cipherAlgorithm.newSecretKeyFromBytes(keyGenerator(key));
     var cipherNonce = cipherAlgorithm.newNonce();
 
     var fromSecretKey = cipherSecretKey;
@@ -25,6 +28,10 @@ class Message {
     // SecretBox is like an isolated box
     var secretBox = await cipherAlgorithm.encrypt(message,
         secretKey: cipherSecretKey, nonce: cipherNonce);
+
+    // Save as encrypted messages
+    encryptedMessages = secretBox.cipherText;
+    secretKeyList = await cipherSecretKey.extractBytes();
 
     // print(
     //     'PlainText  : ${Utf8Decoder().convert(message)} as integer: $message');
@@ -64,6 +71,30 @@ class Message {
   String getMessages(int id) {
     if (from == id || to == id) {
       return utf8.decode(message);
+    } else {
+      return '';
+    }
+  }
+
+  String getEncryptedMessages(int id) {
+    if (from == id || to == id) {
+      return base64Encode(encryptedMessages);
+    } else {
+      return '';
+    }
+  }
+
+  String getEncodedSecretKey(int id) {
+    if (from == id || to == id) {
+      return base64Encode(secretKeyList);
+    } else {
+      return '';
+    }
+  }
+
+  String getSecretKey(int id) {
+    if (from == id || to == id) {
+      return "$secretKeyList";
     } else {
       return '';
     }

@@ -22,8 +22,10 @@ Future<void> main(List<String> arguments) async {
         'Hi, ${(currentAccount > 0) ? "${persons[currentAccount - 1].getName(currentAccount)}(${persons[currentAccount - 1].id})." : "Anonymous. Please select account first"}\nHave a nice day\n');
     print('============== MAIN MENU ==============\n');
     print('${(currentSelect == 1) ? "->" : "  "} 1: Send Message');
-    print('${(currentSelect == 2) ? "->" : "  "} 2: Read Message\n');
-    print('${(currentSelect == 3) ? "->" : "  "} 3: Account\n');
+    print('${(currentSelect == 2) ? "->" : "  "} 2: Read Message');
+    print(
+        '${(currentSelect == 3) ? "->" : "  "} 3: Read Encrypted Message (Advanced Mode)\n');
+    print('${(currentSelect == 4) ? "->" : "  "} 4: Account\n');
     print('${(currentSelect == 0) ? "->" : "  "} 0: Exit\n');
     print('Select: ');
     var input = stdin.readLineSync();
@@ -59,7 +61,8 @@ Future<void> main(List<String> arguments) async {
             message.to = to - 1;
             messages.add(message);
             // print(messages[currentMessage].to);
-            messages[currentMessage].doSecureBox(utf8.encode(userMessage), userKey);
+            messages[currentMessage]
+                .doSecureBox(utf8.encode(userMessage), userKey);
 
             // for debugging purpose
 
@@ -95,7 +98,7 @@ Future<void> main(List<String> arguments) async {
             // print(messages[currentAccount - 1].tempMac); // null
             // print(persons[currentAccount - 1].secretKey); // null
 
-            await Future.delayed(Duration(seconds: 3));
+            await Future.delayed(Duration(seconds: 5));
             // sleep(Duration(seconds: 3)); // Unnecessary because it's future class
             break;
           }
@@ -107,13 +110,14 @@ Future<void> main(List<String> arguments) async {
         currentSelect = 2;
 
         print("\x1B[2J\x1B[0;0H");
+        if (messages.isEmpty) {
+          print('Please send the message at least one');
+          await Future.delayed(Duration(seconds: 3));
+          break;
+        }
+
         // print(messages[currentMessage].macStatus);
         for (int i = 0; i < messages.length; i++) {
-          if (messages.isEmpty) {
-            print('Please send message first');
-            break;
-          }
-
           print(
               'From ${messages[i].from + 1} to ${messages[i].to + 1}: ${messages[i].getMessages(currentAccount - 1)} (${messages[i].macStatus})');
         }
@@ -122,6 +126,25 @@ Future<void> main(List<String> arguments) async {
 
       case '3':
         currentSelect = 3;
+
+        print("\x1B[2J\x1B[0;0H");
+        if (messages.isEmpty) {
+          print('Please send the message at least one');
+          await Future.delayed(Duration(seconds: 3));
+          break;
+        }
+
+        // print(messages[currentMessage].macStatus);
+        for (int i = 0; i < messages.length; i++) {
+          print(
+              'From ${messages[i].from + 1} to ${messages[i].to + 1}:\nEncrypted: ${messages[i].getEncryptedMessages(currentAccount - 1)}\nSecretKey: ${messages[i].getSecretKey(currentAccount - 1)} (as base64: ${messages[i].getEncodedSecretKey(currentAccount - 1)})\n');
+        }
+        await Future.delayed(Duration(seconds: 10));
+        break;
+
+
+      case '4':
+        currentSelect = 4;
         bool state = true;
 
         while (state == true) {
